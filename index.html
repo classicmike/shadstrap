@@ -32,58 +32,13 @@
                         Option 3
                     </button>
                 </li>
-                <li>
-                    <button class="dropdown-item">
-                        Option 4
-                    </button>
-                </li>
             </ul>
         </div>
     </div>
-    <script type="module">
-        import { computePosition, offset, flip, shift, autoUpdate, limitShift } from 'https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.5.1/+esm';
-
-        const trigger = document.querySelector('.dropdown-toggle');
-        const menu = document.querySelector('.dropdown-menu');
-
-        const toggleDropdown = (event) => {
-            event.preventDefault();
-
-            const isVisible = menu.classList.contains('show');
-            if(isVisible) {
-                menu.classList.remove('show');
-            } else {
-                menu.classList.add('show');
-                updatePosition();
-            }
-        }
-
-        const updatePosition = () => {
-            // calculates the position based on  trigger element and the specified configuration.
-            computePosition(trigger, menu, {
-                placement: 'bottom-start',
-                middleware: [offset({
-                    mainAxis: 2,
-                    crossAxis: 0
-                }), flip(), shift({ limiter: limitShift() })], // middle ware. offset - offsets the menu, flip() flips the menu if not enough space, shift() - adjust to say in viewport.
-            }).then(({ x, y}) => {
-                Object.assign(menu.style, {
-                    left: `${x}px`,
-                    top: `${y}px`,
-                });
-            })
-        }
-
-        autoUpdate(trigger, menu, updatePosition);
-
-        trigger.addEventListener('click', toggleDropdown);
-
-        document.addEventListener('click', (event) => {
-            if(!menu.contains(event.target) && !trigger.contains(event.target)) {
-                menu.classList.remove('show');
-            }
-        });
-
+    <script src="./dist/index.js"></script>
+    <script>
+        const dropdownElement = document.querySelector('.dropdown');
+        const dropdown = new Dropdown(dropdownElement);
     </script>
 </body>
 </html>
