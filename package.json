@@ -2,10 +2,10 @@
   "name": "shadstrap",
   "version": "1.0.0",
   "description": "UI Components based off those provided by Bootstrap framework. Shadow DOM compatible.",
-  "main": "dist/index.js",
+  "main": "dist/bundle.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "cat src/utils.js src/dropdown.js src/index.js > dist/combined.js && npx babel dist/combined.js --out-file dist/index.js && rm dist/combined.js"
+    "build": "mkdir -p dist && cat src/dropdown.js src/index.js > dist/combined.js && npx babel dist/combined.js --out-file dist/index.js && rm dist/combined.js"
   },
   "keywords": [],
   "author": "",

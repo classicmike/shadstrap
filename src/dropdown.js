@@ -1,52 +1,63 @@
-import {isDisabled, SelectorEngine} from "./utils";
+import {autoUpdate, computePosition, flip, limitShift, offset, shift} from '@floating-ui/dom';
 
-const SELECTOR_DROPDOWN_WRAPPER = ':has(.dropdown-menu)';
-const SELECTOR_MENU = '.dropdown-menu';
+console.info('Give me LIGHT')
 
-const DROPDOWN_CLASS_NAME_SHOW = 'show';
-const DROPDOWN_CLASSNAME_HIDE = 'hide';
-
-const EVENT_SHOW = `show${EVENT_KEY}`;
+const DefaultConfig = {
+  autoClose: true,
+  offset: [0, 2],
+  focusMode: 'real',
+  rootElement: document,
+  classes: {
+    dropdownWrapper: 'dropdown',
+    dropdownMenu: 'dropdown-menu',
+    dropdownItem: 'dropdown-item',
+    dropdownText: 'dropdown-text'
+  }
+}
 
 class Dropdown {
-    constructor(element, config) {
-        this._element = element;
-        this._config = config;
+  constructor(element, config) {
+    this._element = element;
+    this._config = this._mergeConfig(config);
 
-        this._floatingUI = null;
-        this._parent = SelectorEngine.closest(SELECTOR_DROPDOWN_WRAPPER);
-        this._menu = SelectorEngine.next(this._element, SELECTOR_MENU)[0] || SelectorEngine.prev(this._element, SELECTOR_MENU)[0] || SelectorEngine.findOne(SELECTOR_MENU, this._parent);
+    this._floatingUI = null;
 
-        // navbar...... Let's see
+    this._parent = this._element.closest(`:has(${this._config.classes.dropdownMenu})`);
+    this._menu = this._parent.querySelector(`${this._config.classes.dropdownMenu}`);
+
+    this._setEvents();
+
+  }
+
+  _mergeConfig(config) {
+    return {
+      ...DefaultConfig,
+      ...config,
     }
+  }
 
-    show() {
-        if (isDisabled(this._element)) {
-            return;
-        }
+  _setEvents() {
 
-        const relatedTarget = {
-            relatedTarget: this._element
-        }
+  }
 
-        const showEvent = EventHandler.trigger(this._element, EVENT_SHOW);
+  _createFloatingUI() {
+    const updatePosition = () => {
+      computePosition(this._element, this._menu, {
+        placement: 'bottom-start',
+        middleware: [
+          offset({
+            mainAxis: this._config.offset[1],
+            crossAxis: this._config.offset[0],
+          }), flip(), shift({ padding: 8 })
+        ]
+      }).then(({x, y}) => {
+        Object.assign(this._menu.style, {
+          left: `${x}px`,
+          top: `${y}px`,
+        });
+      });
+    };
 
-        if (showEvent.defaultPrevented) {
-            return;
-        }
-
-        // create create floating UI
-        this._createFloatingUI();
-
-        this._element.focus();
-        this._element.setAttribute('aria-expanded', true);
-
-        this._menu.classList.add(DROPDOWN_CLASS_NAME_SHOW);
-        this._menu.classList.add(DROPDOWN_CLASS_NAME_SHOW);
-
-    }
-
-    _createFloatingUI() {
-
-    }
+    autoUpdate(this._element, this._menu, updatePosition);
+  }
 }

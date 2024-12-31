@@ -41,7 +41,7 @@
         </div>
     </div>
     <script type="module">
-        import { computePosition, offset, flip, shift, autoUpdate } from 'https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.5.1/+esm';
+        import { computePosition, offset, flip, shift, autoUpdate, limitShift } from 'https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.5.1/+esm';
 
         const trigger = document.querySelector('.dropdown-toggle');
         const menu = document.querySelector('.dropdown-menu');
@@ -65,7 +65,7 @@
                 middleware: [offset({
                     mainAxis: 2,
                     crossAxis: 0
-                }), flip(), shift()], // middle ware. offset - offsets the menu, flip() flips the menu if not enough space, shift() - adjust to say in viewport.
+                }), flip(), shift({ limiter: limitShift() })], // middle ware. offset - offsets the menu, flip() flips the menu if not enough space, shift() - adjust to say in viewport.
             }).then(({ x, y}) => {
                 Object.assign(menu.style, {
                     left: `${x}px`,
